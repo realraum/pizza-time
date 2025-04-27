@@ -1,10 +1,11 @@
-mod money;
+pub mod money;
+pub mod users;
 
 use serde::{Deserialize, Serialize};
 
 use money::Money;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Pizza {
     pub id: String,
     pub name: String,
@@ -21,6 +22,17 @@ impl Pizza {
             price: money_from_sus_str(&sus_pizza.price).unwrap(),
         }
     }
+}
+
+pub fn dedup_and_count<T>(pizzas: Vec<T>) -> Vec<(T, usize)>
+where
+    T: Clone + std::hash::Hash + Eq,
+{
+    let mut pizza_map = std::collections::HashMap::new();
+    for pizza in pizzas {
+        *pizza_map.entry(pizza.clone()).or_insert(0) += 1;
+    }
+    pizza_map.into_iter().collect()
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
