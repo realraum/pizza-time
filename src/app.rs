@@ -6,6 +6,7 @@ mod money;
 mod nav;
 mod order;
 mod products;
+mod status;
 
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
@@ -48,6 +49,7 @@ pub fn App() -> impl IntoView {
         // content for this welcome page
         <Router>
             <header::Header/>
+            <status::Status/>
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
                     <Route path=StaticSegment("") view=products::PizzaList/>
