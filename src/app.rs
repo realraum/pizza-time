@@ -1,9 +1,16 @@
+// Stop cargo from complaining about uppercase letters in function names
+#![allow(non_snake_case)]
+
+mod pizza;
+
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 use leptos_router::{
     components::{Route, Router, Routes},
     StaticSegment,
 };
+
+use pizza::PizzaList;
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -34,28 +41,15 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/r3-pizza-time.css"/>
 
         // sets the document title
-        <Title text="Welcome to Leptos"/>
+        <Title text="r3 pizza time"/>
 
         // content for this welcome page
         <Router>
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
-                    <Route path=StaticSegment("") view=HomePage/>
+                    <Route path=StaticSegment("") view=PizzaList/>
                 </Routes>
             </main>
         </Router>
-    }
-}
-
-/// Renders the home page of your application.
-#[component]
-fn HomePage() -> impl IntoView {
-    // Creates a reactive value to update the button
-    let count = RwSignal::new(0);
-    let on_click = move |_| *count.write() += 1;
-
-    view! {
-        <h1>"Welcome to Leptos!"</h1>
-        <button on:click=on_click>"Click Me: " {count}</button>
     }
 }
