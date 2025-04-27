@@ -1,7 +1,11 @@
 // Stop cargo from complaining about uppercase letters in function names
 #![allow(non_snake_case)]
 
-mod pizza;
+mod header;
+mod money;
+mod nav;
+mod order;
+mod products;
 
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
@@ -9,8 +13,6 @@ use leptos_router::{
     components::{Route, Router, Routes},
     StaticSegment,
 };
-
-use pizza::PizzaList;
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -45,11 +47,13 @@ pub fn App() -> impl IntoView {
 
         // content for this welcome page
         <Router>
+            <header::Header/>
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
-                    <Route path=StaticSegment("") view=PizzaList/>
+                    <Route path=StaticSegment("") view=products::PizzaList/>
                 </Routes>
             </main>
+            <nav::Nav/>
         </Router>
     }
 }

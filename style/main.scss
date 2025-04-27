@@ -15,6 +15,28 @@
 */
 
 body {
-	font-family: sans-serif;
-	text-align: center;
+    font-family: sans-serif;
+    text-align: center;
+}
+
+nav {
+    position: absolute;
+    bottom: 0;
+    width: 100dvw;
+
+    ul {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        background-color: aquamarine;
+        align-items: stretch;
+        height: 3rem;
+
+        a {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            border: solid 1px black;
+            align-content: center;
+        }
+    }
 }

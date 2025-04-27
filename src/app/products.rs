@@ -16,7 +16,6 @@ pub fn PizzaList() -> impl IntoView {
     let pizza_types = Resource::new(move || (), move |_| get_pizza_types());
 
     view! {
-        <h1>"🍕 pizza time 🍕"</h1>
         // <button on:click=on_click>"Click Me: " {count}</button>
     }
 }
