@@ -11,6 +11,10 @@ pub fn Money() -> impl IntoView {
                         <td>"10€"</td>
                     </tr>
                     <tr>
+                        <td>"You received"</td>
+                        <td>"0€"</td>
+                    </tr>
+                    <tr>
                         <td>"Your orders cost"</td>
                         <td>"8€"</td>
                     </tr>
@@ -24,6 +28,10 @@ pub fn Money() -> impl IntoView {
                 <input type="text" class="border-2 border-gray-300 rounded-md p-1" placeholder="Update paid amount"/>
                 <button type="submit" class="bg-green-500 text-white rounded-md p-2">"Submit"</button>
             </form>
+            // <form class="flex flex-row gap-2">
+            //     <input type="text" class="border-2 border-gray-300 rounded-md p-1" placeholder="Update received amount"/>
+            //     <button type="submit" class="bg-green-500 text-white rounded-md p-2">"Submit"</button>
+            // </form>
 
             <h2 class="text-xl">"Other's balance"</h2>
             <table class="w-full">
@@ -41,12 +49,14 @@ pub fn Money() -> impl IntoView {
                         <td>"10€"</td>
                         <td>"8€"</td>
                         <td>"2€"</td>
+                        <td><button class="bg-blue-500 text-white rounded-md p-1 ml-2">"Paid"</button></td>
                     </tr>
                     <tr>
                         <td>"Bob"</td>
                         <td>"10€"</td>
                         <td>"8€"</td>
                         <td>"2€"</td>
+                        <td><button class="bg-blue-500 text-white rounded-md p-1 ml-2">"Paid"</button></td>
                     </tr>
                 </tbody>
             </table>
