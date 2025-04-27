@@ -15,6 +15,8 @@ use leptos_router::{
     StaticSegment,
 };
 
+pub static PRODUCT_JSON_STR: &str = include_str!("../private/products.json");
+
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
         <!DOCTYPE html>
