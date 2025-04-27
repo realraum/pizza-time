@@ -52,10 +52,30 @@ pub fn App() -> impl IntoView {
             <status::Status/>
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
-                    <Route path=StaticSegment("") view=products::PizzaList/>
+                    <Route path=StaticSegment("") view=order::Summary/>
+                    <Route path=StaticSegment("/products") view=products::PizzaList/>
+                    <Route path=StaticSegment("/money") view=money::Money/>
+                    <Route path=StaticSegment("/about") view=About/>
                 </Routes>
             </main>
             <nav::Nav/>
         </Router>
+    }
+}
+
+#[component]
+fn About() -> impl IntoView {
+    view! {
+        <div class="flex flex-col items-stretch">
+            <h2 class="text-2xl">"About"</h2>
+            <p>"A simple client-server web app to coordinate ordering several pizzas in a group setting, where either most if not all people have access to a web client, or just one person manages everything."</p>
+            <p>"It is built with Leptos and Rust."</p>
+
+            <p class="mt-2">
+                "Licensed under the AGPL-3.0 License." <br/>
+                "See its source code "
+                <a class="underline text-blue-500" href="https://github.com/realraum/pizza-time" rel="external" target="_blank">"here"</a>
+            </p>
+        </div>
     }
 }
