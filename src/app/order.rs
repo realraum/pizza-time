@@ -7,7 +7,7 @@ use crate::common::{dedup_and_count, money::Money, users::User};
 use crate::server::{get_user_id_and_create_if_required, USERS};
 
 #[server(GetUsers, endpoint = "get_users")]
-async fn get_users() -> Result<(BTreeMap<u16, User>, u16), ServerFnError> {
+pub async fn get_users() -> Result<(BTreeMap<u16, User>, u16), ServerFnError> {
     let (users, uid) = get_user_id_and_create_if_required!();
 
     Ok((users.clone(), uid))
@@ -53,10 +53,6 @@ pub fn Summary() -> impl IntoView {
     );
 
     let my_name = RwSignal::new(String::new());
-    Effect::new(move || {
-        let name = my_name.get();
-        println!("my_name: {:?}", name);
-    });
 
     let set_name = move |e: SubmitEvent| {
         e.prevent_default();
