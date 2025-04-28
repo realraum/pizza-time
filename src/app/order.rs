@@ -96,7 +96,7 @@ pub fn Summary() -> impl IntoView {
                                     // <p>"Your name"</p>
                                     <input
                                         type="text"
-                                        class="border-2 border-gray-300 rounded-md p-1 w-full"
+                                        class="border-2 border-gray-300 rounded-md p-1 w-full dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                                         placeholder="Enter your name"
                                         bind:value=my_name
                                     />
@@ -110,7 +110,7 @@ pub fn Summary() -> impl IntoView {
                                     </button>
                                 </form>
 
-                                <div class="flex flex-col items-center bg-green-50 rounded p-1">
+                                <div class="flex flex-col items-center bg-green-50 rounded p-1 dark:bg-gray-700 dark:text-gray-200">
                                     <h2 class="text-xl">"Your selection"</h2>
                                     <p class="test-sm">"Your name: "{me.name}</p>
                                     <table>
@@ -147,7 +147,7 @@ pub fn Summary() -> impl IntoView {
                                     </table>
                                 </div>
 
-                                <div class="flex flex-col items-center bg-green-50 rounded p-1">
+                                <div class="flex flex-col items-center bg-green-50 rounded p-1 dark:bg-gray-700 dark:text-gray-200">
                                     <h2 class="text-xl">"Other's selection"</h2>
                                     <h4 class="text-lg">"Alice"</h4>
                                     <table>
