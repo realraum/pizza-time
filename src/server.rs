@@ -63,7 +63,7 @@ macro_rules! get_user_id_and_create_if_required {
             .same_site(SameSite::Lax);
         opts.insert_header(SET_COOKIE, cookie.to_string().try_into().unwrap());
 
-        uid
+        (users, uid)
     }};
 }
 

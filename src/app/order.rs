@@ -8,10 +8,7 @@ use crate::server::{get_user_id_and_create_if_required, USERS};
 
 #[server(GetUsers, endpoint = "get_users")]
 async fn get_users() -> Result<(BTreeMap<u16, User>, u16), ServerFnError> {
-    let uid = get_user_id_and_create_if_required!();
-
-    let users = *USERS.get().unwrap();
-    let users = users.lock().unwrap();
+    let (users, uid) = get_user_id_and_create_if_required!();
 
     Ok((users.clone(), uid))
 }
