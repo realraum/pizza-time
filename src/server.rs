@@ -13,6 +13,9 @@ macro_rules! get_user_id_and_create_if_required {
         use http::{header::SET_COOKIE, HeaderMap};
         use leptos_axum::extract;
 
+        use crate::common::{money::Money, users::User};
+        use crate::server::USERS;
+
         let (headers,): (HeaderMap,) = extract().await?;
 
         let users = *USERS.get().unwrap();

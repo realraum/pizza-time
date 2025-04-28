@@ -1,6 +1,8 @@
-use leptos::{either::Either, prelude::*};
+use leptos::{either::Either, prelude::*, task::spawn_local};
 
 use crate::common::{Pizza, SusPizza};
+#[cfg(feature = "ssr")]
+use crate::server::get_user_id_and_create_if_required;
 
 use super::PRODUCT_JSON_STR;
 
@@ -15,6 +17,18 @@ pub async fn get_pizza_types() -> Result<Vec<Pizza>, ServerFnError> {
             e
         ))),
     }
+}
+
+#[server(AddPizza, endpoint = "add_pizza")]
+pub async fn add_pizza(pizza: Pizza) -> Result<(), ServerFnError> {
+    let (mut users, uid) = get_user_id_and_create_if_required!();
+
+    if let Some(user) = users.get_mut(&uid) {
+        user.order.push(pizza);
+    } else {
+        return Err(ServerFnError::ServerError("User not found".to_string()));
+    }
+    Ok(())
 }
 
 /// Renders the home page of your application.
@@ -51,11 +65,19 @@ pub fn PizzaList() -> impl IntoView {
                         .map(|pt| {
                             view! {
                                 <tr>
-                                    <td>{pt.name}</td>
-                                    <td>{pt.description}</td>
+                                    <td>{pt.name.clone()}</td>
+                                    <td>{pt.description.clone()}</td>
                                     <td>{pt.price.to_string()}</td>
                                     <td>
-                                        <button class="bg-green-500 text-white rounded-md p-1 ml-2">
+                                        <button
+                                            class="bg-green-500 text-white rounded-md p-1 ml-2"
+                                            on:click=move |_| {
+                                                let pt = pt.clone();
+                                                spawn_local(async move {
+                                                    add_pizza(pt).await.unwrap();
+                                                });
+                                            }
+                                        >
                                             "Add"
                                         </button>
                                     </td>

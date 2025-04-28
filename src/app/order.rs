@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use leptos::{ev::SubmitEvent, prelude::*, task::spawn_local};
 
-use crate::common::{money::Money, users::User};
+use crate::common::{dedup_and_count, money::Money, users::User};
 #[cfg(feature = "ssr")]
 use crate::server::{get_user_id_and_create_if_required, USERS};
 
@@ -74,9 +74,9 @@ pub fn Summary() -> impl IntoView {
                             .collect::<Vec<_>>();
 
                         view! {
-                            <p>
-                                {format!("{:?}", users)}
-                            </p>
+                            // <p>
+                            //     {format!("{:?}", users)}
+                            // </p>
 
                             <div class="flex flex-col items-center gap-2 w-full">
                                 <form
@@ -105,18 +105,21 @@ pub fn Summary() -> impl IntoView {
                                     <p class="test-sm">"Your name: "{me.name}</p>
                                     <table>
                                         <tbody>
-                                            <tr>
-                                                <td>"1x"</td>
-                                                <td>"QuadFor"</td>
-                                                <td>"@ 10€"</td>
-                                                <td><button class="bg-red-500 text-white rounded-md p-1 ml-2">"Remove"</button></td>
-                                            </tr>
-                                            <tr>
-                                                <td>"1x"</td>
-                                                <td>"Veggi"</td>
-                                                <td>"@ 12€"</td>
-                                                <td><button class="bg-red-500 text-white rounded-md p-1 ml-2">"Remove"</button></td>
-                                            </tr>
+                                            {
+                                                let order = dedup_and_count(me.order.clone());
+                                                order.into_iter()
+                                                    .map(|(pizza, count)| {
+                                                        view! {
+                                                            <tr>
+                                                                <td>{format!("{}x", count)}</td>
+                                                                <td>{pizza.name}</td>
+                                                                <td>{format!("@ {}€", pizza.price.to_string())}</td>
+                                                                <td><button class="bg-red-500 text-white rounded-md p-1 ml-2">"Remove"</button></td>
+                                                            </tr>
+                                                        }
+                                                    })
+                                                    .collect::<Vec<_>>()
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
