@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use leptos::{prelude::*, task::spawn_local};
+use leptos::{ev::SubmitEvent, prelude::*, task::spawn_local};
 
 use crate::common::{money::Money, users::User};
 #[cfg(feature = "ssr")]
@@ -15,15 +15,22 @@ async fn get_users() -> Result<(BTreeMap<u16, User>, u16), ServerFnError> {
 
 #[server(SetName, endpoint = "set_name")]
 async fn set_name(name: String) -> Result<(), ServerFnError> {
-    println!("Setting name to {name}");
+    let (mut users, uid) = get_user_id_and_create_if_required!();
 
-    return Ok(()); // TODO implement the name setting fn
+    if let Some(user) = users.get_mut(&uid) {
+        user.name = name;
+    } else {
+        return Err(ServerFnError::ServerError("User not found".to_string()));
+    }
+
+    Ok(())
 }
 
 #[component]
 pub fn Summary() -> impl IntoView {
+    let update_signal = RwSignal::new(true);
     let users = Resource::new(
-        move || (),
+        move || update_signal.get(),
         async move |_| {
             let users = get_users().await;
 
@@ -36,6 +43,15 @@ pub fn Summary() -> impl IntoView {
         let name = my_name.get();
         println!("my_name: {:?}", name);
     });
+
+    let set_name = move |e: SubmitEvent| {
+        e.prevent_default();
+        let name = my_name.get();
+        spawn_local(async {
+            set_name(name).await.unwrap();
+        });
+        update_signal.set(!update_signal.get());
+    };
 
     view! {
         <Suspense
@@ -63,7 +79,10 @@ pub fn Summary() -> impl IntoView {
                             </p>
 
                             <div class="flex flex-col items-center gap-2 w-full">
-                                <form class="flex flex-row w-full gap-2">
+                                <form
+                                    on:submit=set_name
+                                    class="flex flex-row w-full gap-2"
+                                >
                                     // <p>"Your name"</p>
                                     <input
                                         type="text"
@@ -72,13 +91,10 @@ pub fn Summary() -> impl IntoView {
                                         bind:value=my_name
                                     />
                                     <button
-                                        // type="submit"
-                                        type="button"
+                                        type="submit"
+                                        // type="button"
                                         class="bg-green-500 text-white rounded-md p-2"
-                                        on:click=move |_| {
-                                            let name = my_name.get();
-                                            spawn_local(async{set_name(name).await.unwrap();});
-                                        }
+                                        // on:click=set_name
                                     >
                                         "Submit"
                                     </button>
@@ -86,6 +102,7 @@ pub fn Summary() -> impl IntoView {
 
                                 <div class="flex flex-col items-center bg-green-50 rounded p-1">
                                     <h2 class="text-xl">"Your selection"</h2>
+                                    <p class="test-sm">"Your name: "{me.name}</p>
                                     <table>
                                         <tbody>
                                             <tr>
