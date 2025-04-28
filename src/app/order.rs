@@ -4,63 +4,14 @@ use leptos::{prelude::*, task::spawn_local};
 
 use crate::common::{money::Money, users::User};
 #[cfg(feature = "ssr")]
-use crate::server::USERS;
+use crate::server::{get_user_id_and_create_if_required, USERS};
 
 #[server(GetUsers, endpoint = "get_users")]
 async fn get_users() -> Result<(BTreeMap<u16, User>, u16), ServerFnError> {
-    use axum_extra::extract::cookie::{Cookie, SameSite};
-    use http::{header::SET_COOKIE, HeaderMap};
-    use leptos_axum::extract;
-
-    let (headers,): (HeaderMap,) = extract().await?;
+    let uid = get_user_id_and_create_if_required!();
 
     let users = *USERS.get().unwrap();
-    let mut users = users.lock().unwrap();
-
-    let mut uid: Option<u16> = if let Some(cookie_header) = headers.get("cookie") {
-        let mut uid = None;
-        for cookie in Cookie::split_parse_encoded(cookie_header.to_str().unwrap()) {
-            let cookie = cookie.unwrap();
-            match cookie.name() {
-                "r3-pizza-time_user-id" => {
-                    uid = cookie.value().parse().ok();
-                    break;
-                }
-                _ => (),
-            }
-        }
-        uid
-    } else {
-        None
-    };
-
-    if uid.is_none() || !users.contains_key(&uid.unwrap()) {
-        loop {
-            let new_uid = rand::random::<u16>();
-            if !users.contains_key(&new_uid) {
-                let new_user = User {
-                    id: new_uid,
-                    name: String::new(),
-                    order: Vec::new(),
-                    paid_amount: Money::from_cents(0),
-                    received_amount: Money::from_cents(0),
-                };
-                users.insert(new_uid, new_user);
-                uid = Some(new_uid);
-                break;
-            }
-        }
-    }
-
-    let uid = uid.unwrap();
-
-    let opts = expect_context::<leptos_axum::ResponseOptions>();
-    let cookie = Cookie::build(("r3-pizza-time_user-id", uid.to_string()))
-        .path("/")
-        .http_only(false)
-        .secure(false)
-        .same_site(SameSite::Lax);
-    opts.insert_header(SET_COOKIE, cookie.to_string().try_into().unwrap());
+    let users = users.lock().unwrap();
 
     Ok((users.clone(), uid))
 }
