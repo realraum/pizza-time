@@ -1,4 +1,4 @@
-use leptos::{ev::SubmitEvent, prelude::*, task::spawn_local};
+use leptos::{either::Either, ev::SubmitEvent, prelude::*, task::spawn_local};
 
 #[cfg(feature = "ssr")]
 use crate::server::get_user_id_and_create_if_required;
@@ -37,7 +37,18 @@ pub fn Money() -> impl IntoView {
                 <tbody>
                     <tr>
                         <td>"You paid"</td>
-                        <td>"10€"</td>
+                        <Suspense>
+                            <td>
+                                {move || {
+                                    let Some(Ok(users)) = users.get() else {
+                                        return Either::Left("Loading...".to_string());
+                                    };
+                                    let user = users.0.iter().find(|u| u.id == users.1).unwrap();
+                                    Either::Right(user.paid_amount.to_string())
+                                }}
+                                "€"
+                            </td>
+                        </Suspense>
                     </tr>
                     <tr>
                         <td>"You received"</td>
@@ -76,6 +87,7 @@ pub fn Money() -> impl IntoView {
                     spawn_local(async move {
                         set_paid(paid).await.unwrap();
                     });
+                    update_signal.set(!update_signal.get());
                 }
             >
                 <input
