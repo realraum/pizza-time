@@ -26,6 +26,20 @@ async fn set_name(name: String) -> Result<(), ServerFnError> {
     Ok(())
 }
 
+/// Removes a pizza by pid (pizza id)
+#[server(RmPizza, endpoint = "rm_pizza")]
+async fn rm_pizza(pid: String) -> Result<(), ServerFnError> {
+    let (mut users, uid) = get_user_id_and_create_if_required!();
+
+    if let Some(user) = users.get_mut(&uid) {
+        user.order.retain(|p| p.id != pid);
+    } else {
+        return Err(ServerFnError::ServerError("User not found".to_string()));
+    }
+
+    Ok(())
+}
+
 #[component]
 pub fn Summary() -> impl IntoView {
     let update_signal = RwSignal::new(true);
@@ -114,7 +128,20 @@ pub fn Summary() -> impl IntoView {
                                                                 <td>{format!("{}x", count)}</td>
                                                                 <td>{pizza.name}</td>
                                                                 <td>{format!("@ {}€", pizza.price.to_string())}</td>
-                                                                <td><button class="bg-red-500 text-white rounded-md p-1 ml-2">"Remove"</button></td>
+                                                                <td>
+                                                                    <button
+                                                                        class="bg-red-500 text-white rounded-md p-1 ml-2"
+                                                                        on:click=move |_| {
+                                                                            let pid = pizza.id.clone();
+                                                                            spawn_local(async move {
+                                                                                rm_pizza(pid).await.unwrap();
+                                                                            });
+                                                                            update_signal.set(!update_signal.get());
+                                                                        }
+                                                                    >
+                                                                        "Remove"
+                                                                    </button>
+                                                                </td>
                                                             </tr>
                                                         }
                                                     })
