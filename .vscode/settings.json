@@ -2,7 +2,8 @@
     "rust-analyzer.cargo.features": "all",
     "cSpell.words": [
         "axum",
-        "leptos"
+        "leptos",
+        "Stylesheet"
     ],
     "emmet.includeLanguages": {
         "rust": "html",
