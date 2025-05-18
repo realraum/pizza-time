@@ -20,7 +20,7 @@ pub async fn get_pizza_types() -> Result<Vec<Pizza>, ServerFnError> {
 }
 
 #[server(AddPizza, endpoint = "add_pizza")]
-pub async fn add_pizza(pizza: Pizza) -> Result<(), ServerFnError> {
+pub async fn add_pizza_for_me(pizza: Pizza) -> Result<(), ServerFnError> {
     let (mut users, uid) = get_user_id_and_create_if_required!();
 
     if let Some(user) = users.get_mut(&uid) {
@@ -64,19 +64,24 @@ pub fn PizzaList() -> impl IntoView {
                     Either::Right(pizza_types.unwrap().into_iter()
                         .map(|pt| {
                             view! {
-                                <tr>
+                                <tr class="my-2">
                                     <td>{pt.name.clone()}</td>
                                     <td>{pt.description.clone()}</td>
                                     <td>{pt.price.to_string()}</td>
-                                    <td>
+                                    <td class="flex flex-col">
                                         <button
                                             class="bg-green-500 text-white rounded-md p-1 ml-2"
                                             on:click=move |_| {
                                                 let pt = pt.clone();
                                                 spawn_local(async move {
-                                                    add_pizza(pt).await.unwrap();
+                                                    add_pizza_for_me(pt).await.unwrap();
                                                 });
                                             }
+                                        >
+                                            "Add"
+                                        </button>
+                                        <button
+                                            class="bg-green-500 text-white rounded-md p-1 ml-2"
                                         >
                                             "Add"
                                         </button>
