@@ -1,8 +1,11 @@
 use leptos::{either::Either, html::Dialog, prelude::*, task::spawn_local};
 
-use crate::common::{Pizza, SusPizza};
 #[cfg(feature = "ssr")]
 use crate::server::get_user_id_and_create_if_required;
+use crate::{
+    app::order::get_users,
+    common::{Pizza, SusPizza},
+};
 
 use super::PRODUCT_JSON_STR;
 
@@ -34,7 +37,7 @@ pub async fn add_pizza_for_me(pizza: Pizza) -> Result<(), ServerFnError> {
 /// Renders the home page of your application.
 #[component]
 pub fn PizzaList() -> impl IntoView {
-    #[derive(Clone)]
+    #[derive(Clone, PartialEq)]
     enum DialogState {
         AddProduct(Pizza),
         Closed,
@@ -63,15 +66,73 @@ pub fn PizzaList() -> impl IntoView {
         }
     });
 
+    let users = Resource::new(dialog_state, async move |_| {
+        let users = get_users().await;
+        users.map(|users| (users.0.values().cloned().collect::<Vec<_>>(), users.1))
+    });
+
     view! {
         <dialog
             node_ref=dialog_ref
         >
             <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-                <div class="bg-white rounded-lg p-4">
+                <div class="bg-white rounded-lg p-4 flex flex-col">
                     <h2 class="text-xl">"Add Pizza"</h2>
-                    <button on:click=close>"Close"</button>
+                    <p>"Select a user to add the pizza for"</p>
+                    <Suspense
+                        fallback=|| view! { <p>"Loading users..."</p> }
+                    >
+                        {move || {
+                            let Some(pizza) = (match dialog_state.get() {
+                                DialogState::AddProduct(pizza) => Some(pizza),
+                                DialogState::Closed => None,
+                            }) else {
+                                return Either::Left(view! { <p>"Failed to load pizza types"</p> })
+                            };
 
+                            Either::Right(users.get()
+                                .map(move |users| {
+                                    let (users, my_uid)= users.unwrap();
+
+                                    let me = users. iter()
+                                        .find(|user| user.id == my_uid)
+                                        .unwrap().clone();
+
+                                    let others = users.iter()
+                                        // .filter(|user| user.id != my_uid)
+                                        .cloned()
+                                        .collect::<Vec<_>>();
+
+                                    others.into_iter()
+                                        .map(|user| {
+                                            let user2 = user.clone();
+                                            let pt = pizza.clone();
+                                            Either::Left(view! {
+                                                <div class="flex flex-col items-center gap-2 w-full">
+                                                    <button
+                                                        class="bg-green-500 text-white rounded-md p-1 ml-2"
+                                                        on:click=move |_| {
+                                                            let pt = pt.clone();
+                                                            spawn_local(async move {
+                                                                add_pizza_for_me(pt).await.unwrap();
+                                                            });
+                                                        }
+                                                    >
+                                                        {format!("{} ({})", user.name, user.id)}
+                                                    </button>
+                                                </div>
+                                            })
+                                        })
+                                        .collect::<Vec<_>>()
+                                })
+                                .unwrap_or_else(|| {
+                                    vec![Either::Right(view! {
+                                        <p>"Failed to load users"</p>
+                                    })]
+                                }))
+                        }}
+                    </Suspense>
+                    <button on:click=close>"Close"</button>
                 </div>
             </div>
         </dialog>
