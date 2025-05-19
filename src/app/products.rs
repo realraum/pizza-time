@@ -34,25 +34,31 @@ pub async fn add_pizza_for_me(pizza: Pizza) -> Result<(), ServerFnError> {
 /// Renders the home page of your application.
 #[component]
 pub fn PizzaList() -> impl IntoView {
+    #[derive(Clone)]
+    enum DialogState {
+        AddProduct(Pizza),
+        Closed,
+    }
+
     // let count = RwSignal::new(Vec::new());
     // let on_click = move |_| *count.write() += 1;
 
     let pizza_types = Resource::new(move || (), move |_| get_pizza_types());
 
     let dialog_ref = NodeRef::<Dialog>::new();
-    let is_open = RwSignal::new(false);
-    let toggle = move |_| {
-        is_open.update(|v| *v = !*v);
-    };
+    let dialog_state = RwSignal::new(DialogState::Closed);
     let close = move |_| {
-        is_open.set(false);
+        dialog_state.set(DialogState::Closed);
     };
     Effect::new(move |_| {
         if let Some(dialog) = dialog_ref.get() {
-            if is_open.get() {
-                dialog.show_modal().unwrap();
-            } else {
-                dialog.close();
+            match dialog_state.get() {
+                DialogState::AddProduct(_) => {
+                    dialog.show_modal().unwrap();
+                }
+                DialogState::Closed => {
+                    dialog.close();
+                }
             }
         }
     });
@@ -69,29 +75,23 @@ pub fn PizzaList() -> impl IntoView {
                 </div>
             </div>
         </dialog>
-        <button
-            class="bg-blue-500 text-white rounded-md p-1 ml-2"
-            on:click=toggle
-        >
-            "Add Pizza"
-        </button>
-        {
-            move || if is_open.get() {
-                Some(view! {
-                    // <dialog>
-                    //     <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-                    //         <div class="bg-white rounded-lg p-4">
-                    //             <h2 class="text-xl">"Add Pizza"</h2>
-                    //             <button on:click=close>"Close"</button>
-
-                    //         </div>
-                    //     </div>
-                    // </dialog>
-                })
-            } else {
-                None
-            }
-        }
+        // {
+        //     move || if dialog_state.get() {
+        //         Some(view! {
+        //             // <dialog>
+        //             //     <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        //             //         <div class="bg-white rounded-lg p-4">
+        //             //             <h2 class="text-xl">"Add Pizza"</h2>
+        //             //             <button on:click=close>"Close"</button>
+        //
+        //             //         </div>
+        //             //     </div>
+        //             // </dialog>
+        //         })
+        //     } else {
+        //         None
+        //     }
+        // }
         // <button on:click=on_click>"Click Me: " {count}</button>
         <Suspense
             fallback=|| view! { <p>"Loading pizza types..."</p> }
@@ -115,6 +115,7 @@ pub fn PizzaList() -> impl IntoView {
 
                     Either::Right(pizza_types.unwrap().into_iter()
                         .map(|pt| {
+                            let pt2 = pt.clone();
                             view! {
                                 <tr class="my-2">
                                     <td>{pt.name.clone()}</td>
@@ -130,12 +131,15 @@ pub fn PizzaList() -> impl IntoView {
                                                 });
                                             }
                                         >
-                                            "Add"
+                                            "Add for me"
                                         </button>
                                         <button
                                             class="bg-green-500 text-white rounded-md p-1 ml-2"
+                                            on:click=move |_| {
+                                                dialog_state.set(DialogState::AddProduct(pt2.clone()));
+                                            }
                                         >
-                                            "Add"
+                                            "Add for ..."
                                         </button>
                                     </td>
                                 </tr>
