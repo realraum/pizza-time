@@ -110,6 +110,10 @@ pub fn Summary() -> impl IntoView {
                                     </button>
                                 </form>
 
+                                <button>
+                                    "New session"
+                                </button>
+
                                 <div class="flex flex-col items-center bg-green-50 rounded p-1 dark:bg-gray-700 dark:text-gray-200">
                                     <h2 class="text-xl">"Your selection"</h2>
                                     <p class="test-sm">"Your name: "{me.name}</p>
