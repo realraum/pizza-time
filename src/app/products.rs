@@ -159,16 +159,11 @@ pub fn PizzaList() -> impl IntoView {
         >
             <h2 class="text-2xl">"Pizza types"</h2>
             <p>"Click on a pizza to add it to your order"</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>"Name"</th>
-                        <th>"Description"</th>
-                        <th>"Price"</th>
-                        // <th>"Action"</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="grid grid-cols-4 gap-4">
+                <span>"Name"</span>
+                <span>"Description"</span>
+                <span>"Price"</span>
+                <span>"Action"</span>
                 {move || {
                     let Some(pizza_types) = pizza_types.get() else {
                         return Either::Left(view! { <p>"Failed to load pizza types"</p> })
@@ -178,11 +173,10 @@ pub fn PizzaList() -> impl IntoView {
                         .map(|pt| {
                             let pt2 = pt.clone();
                             view! {
-                                <tr class="my-2">
-                                    <td>{pt.name.clone()}</td>
-                                    <td>{pt.description.clone()}</td>
-                                    <td>{pt.price.to_string()}</td>
-                                    <td class="flex flex-col">
+                                    <span>{pt.name.clone()}</span>
+                                    <span>{pt.description.clone()}</span>
+                                    <span>{pt.price.to_string()}</span>
+                                    <div class="flex flex-col gap-2">
                                         <button
                                             class="bg-green-500 text-white rounded-md p-1 ml-2"
                                             on:click=move |_| {
@@ -192,7 +186,7 @@ pub fn PizzaList() -> impl IntoView {
                                                 });
                                             }
                                         >
-                                            "Add for me"
+                                            "For me"
                                         </button>
                                         <button
                                             class="bg-green-500 text-white rounded-md p-1 ml-2"
@@ -200,16 +194,14 @@ pub fn PizzaList() -> impl IntoView {
                                                 dialog_state.set(DialogState::AddProduct(pt2.clone()));
                                             }
                                         >
-                                            "Add for ..."
+                                            "Select person"
                                         </button>
-                                    </td>
-                                </tr>
+                                    </div>
                             }
                         })
                         .collect::<Vec<_>>())
                 }}
-                </tbody>
-            </table>
+            </div>
         </Suspense>
     }
 }
