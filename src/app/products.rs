@@ -1,4 +1,4 @@
-use leptos::{either::Either, prelude::*, task::spawn_local};
+use leptos::{either::Either, html::Dialog, prelude::*, task::spawn_local};
 
 use crate::common::{Pizza, SusPizza};
 #[cfg(feature = "ssr")]
@@ -39,7 +39,59 @@ pub fn PizzaList() -> impl IntoView {
 
     let pizza_types = Resource::new(move || (), move |_| get_pizza_types());
 
+    let dialog_ref = NodeRef::<Dialog>::new();
+    let is_open = RwSignal::new(false);
+    let toggle = move |_| {
+        is_open.update(|v| *v = !*v);
+    };
+    let close = move |_| {
+        is_open.set(false);
+    };
+    Effect::new(move |_| {
+        if let Some(dialog) = dialog_ref.get() {
+            if is_open.get() {
+                dialog.show_modal().unwrap();
+            } else {
+                dialog.close();
+            }
+        }
+    });
+
     view! {
+        <dialog
+            node_ref=dialog_ref
+        >
+            <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                <div class="bg-white rounded-lg p-4">
+                    <h2 class="text-xl">"Add Pizza"</h2>
+                    <button on:click=close>"Close"</button>
+
+                </div>
+            </div>
+        </dialog>
+        <button
+            class="bg-blue-500 text-white rounded-md p-1 ml-2"
+            on:click=toggle
+        >
+            "Add Pizza"
+        </button>
+        {
+            move || if is_open.get() {
+                Some(view! {
+                    // <dialog>
+                    //     <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                    //         <div class="bg-white rounded-lg p-4">
+                    //             <h2 class="text-xl">"Add Pizza"</h2>
+                    //             <button on:click=close>"Close"</button>
+
+                    //         </div>
+                    //     </div>
+                    // </dialog>
+                })
+            } else {
+                None
+            }
+        }
         // <button on:click=on_click>"Click Me: " {count}</button>
         <Suspense
             fallback=|| view! { <p>"Loading pizza types..."</p> }
