@@ -1,6 +1,8 @@
 // Stop cargo from complaining about uppercase letters in function names
 #![allow(non_snake_case)]
 
+pub mod components;
+
 mod header;
 mod money;
 mod nav;

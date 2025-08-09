@@ -3,7 +3,7 @@ use leptos::{either::Either, html::Dialog, prelude::*, task::spawn_local};
 #[cfg(feature = "ssr")]
 use crate::server::get_user_id_and_create_if_required;
 use crate::{
-    app::order::get_users,
+    app::{components::ProductCard, order::get_users},
     common::{Pizza, SusPizza},
 };
 
@@ -159,11 +159,50 @@ pub fn PizzaList() -> impl IntoView {
         >
             <h2 class="text-2xl">"Pizza types"</h2>
             <p>"Click on a pizza to add it to your order"</p>
-            <div class="grid grid-cols-4 gap-4">
-                <span>"Name"</span>
-                <span>"Description"</span>
-                <span>"Price"</span>
-                <span>"Action"</span>
+            // <div class="grid grid-cols-4 gap-4">
+            //     <span>"Name"</span>
+            //     <span>"Description"</span>
+            //     <span>"Price"</span>
+            //     <span>"Action"</span>
+            //     {move || {
+            //         let Some(pizza_types) = pizza_types.get() else {
+            //             return Either::Left(view! { <p>"Failed to load pizza types"</p> })
+            //         };
+            //
+            //         Either::Right(pizza_types.unwrap().into_iter()
+            //             .map(|pt| {
+            //                 let pt2 = pt.clone();
+            //                 view! {
+            //                         <span>{pt.name.clone()}</span>
+            //                         <span>{pt.description.clone()}</span>
+            //                         <span>{pt.price.to_string()}</span>
+            //                         <div class="flex flex-col gap-2">
+            //                             <button
+            //                                 class="bg-green-500 text-white rounded-md p-1 ml-2"
+            //                                 on:click=move |_| {
+            //                                     let pt = pt.clone();
+            //                                     spawn_local(async move {
+            //                                         add_pizza_for_me(pt).await.unwrap();
+            //                                     });
+            //                                 }
+            //                             >
+            //                                 "For me"
+            //                             </button>
+            //                             <button
+            //                                 class="bg-green-500 text-white rounded-md p-1 ml-2"
+            //                                 on:click=move |_| {
+            //                                     dialog_state.set(DialogState::AddProduct(pt2.clone()));
+            //                                 }
+            //                             >
+            //                                 "Select person"
+            //                             </button>
+            //                         </div>
+            //                 }
+            //             })
+            //             .collect::<Vec<_>>())
+            //     }}
+            // </div>
+            <div class="grid grid-cols-1 gap-4">
                 {move || {
                     let Some(pizza_types) = pizza_types.get() else {
                         return Either::Left(view! { <p>"Failed to load pizza types"</p> })
@@ -173,30 +212,7 @@ pub fn PizzaList() -> impl IntoView {
                         .map(|pt| {
                             let pt2 = pt.clone();
                             view! {
-                                    <span>{pt.name.clone()}</span>
-                                    <span>{pt.description.clone()}</span>
-                                    <span>{pt.price.to_string()}</span>
-                                    <div class="flex flex-col gap-2">
-                                        <button
-                                            class="bg-green-500 text-white rounded-md p-1 ml-2"
-                                            on:click=move |_| {
-                                                let pt = pt.clone();
-                                                spawn_local(async move {
-                                                    add_pizza_for_me(pt).await.unwrap();
-                                                });
-                                            }
-                                        >
-                                            "For me"
-                                        </button>
-                                        <button
-                                            class="bg-green-500 text-white rounded-md p-1 ml-2"
-                                            on:click=move |_| {
-                                                dialog_state.set(DialogState::AddProduct(pt2.clone()));
-                                            }
-                                        >
-                                            "Select person"
-                                        </button>
-                                    </div>
+                                <ProductCard pizza=pt2 />
                             }
                         })
                         .collect::<Vec<_>>())
