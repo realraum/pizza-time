@@ -55,12 +55,14 @@ pub fn App() -> impl IntoView {
             <header::Header/>
             <status::Status/>
             <main class="sm:w-11/12 mx-auto max-w-3xl mb-12 pb-4">
-                <Routes fallback=|| "Page not found.".into_view()>
-                    <Route path=StaticSegment("") view=order::Summary/>
-                    <Route path=StaticSegment("/products") view=products::PizzaList/>
-                    <Route path=StaticSegment("/money") view=money::Money/>
-                    <Route path=StaticSegment("/about") view=About/>
-                </Routes>
+                <div class="sm:m-4">
+                    <Routes fallback=|| "Page not found.".into_view()>
+                        <Route path=StaticSegment("") view=order::Summary/>
+                        <Route path=StaticSegment("/products") view=products::PizzaList/>
+                        <Route path=StaticSegment("/money") view=money::Money/>
+                        <Route path=StaticSegment("/about") view=About/>
+                    </Routes>
+                </div>
             </main>
             <nav::Nav/>
         </Router>

@@ -202,21 +202,23 @@ pub fn PizzaList() -> impl IntoView {
             //             .collect::<Vec<_>>())
             //     }}
             // </div>
-            <div class="grid grid-cols-1">
-                {move || {
-                    let Some(pizza_types) = pizza_types.get() else {
-                        return Either::Left(view! { <p>"Failed to load pizza types"</p> })
-                    };
+            <div class="sm:rounded-xl sm:overflow-clip mt-2 sm:mt-4">
+                <div class="grid grid-cols-1">
+                    {move || {
+                        let Some(pizza_types) = pizza_types.get() else {
+                            return Either::Left(view! { <p>"Failed to load pizza types"</p> })
+                        };
 
-                    Either::Right(pizza_types.unwrap().into_iter()
-                        .map(|pt| {
-                            let pt2 = pt.clone();
-                            view! {
-                                <ProductCard pizza=pt2 />
-                            }
-                        })
-                        .collect::<Vec<_>>())
-                }}
+                        Either::Right(pizza_types.unwrap().into_iter()
+                            .map(|pt| {
+                                let pt2 = pt.clone();
+                                view! {
+                                    <ProductCard pizza=pt2 />
+                                }
+                            })
+                            .collect::<Vec<_>>())
+                    }}
+                </div>
             </div>
         </Suspense>
     }
