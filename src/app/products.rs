@@ -202,7 +202,7 @@ pub fn PizzaList() -> impl IntoView {
             //             .collect::<Vec<_>>())
             //     }}
             // </div>
-            <div class="grid grid-cols-1 gap-4">
+            <div class="grid grid-cols-1">
                 {move || {
                     let Some(pizza_types) = pizza_types.get() else {
                         return Either::Left(view! { <p>"Failed to load pizza types"</p> })
