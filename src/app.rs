@@ -18,6 +18,7 @@ use leptos_router::{
 };
 
 pub static PRODUCT_JSON_STR: &str = include_str!("../private/products.json");
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -74,13 +75,16 @@ fn About() -> impl IntoView {
     view! {
         <div class="flex flex-col items-stretch">
             <h2 class="text-2xl">"About"</h2>
-            <p>"A simple client-server web app to coordinate ordering several pizzas in a group setting, where either most if not all people have access to a web client, or just one person manages everything."</p>
+            <p>"r3-pizza-time is a simple client-server web app to coordinate ordering several pizzas in a group setting, where either most if not all people have access to a web client, or just one person manages everything."</p>
             <p>"It is built with Leptos and Rust."</p>
 
             <p class="mt-2">
                 "Licensed under the AGPL-3.0 License." <br/>
                 "See its source code "
                 <a class="underline text-blue-500" href="https://github.com/realraum/pizza-time" rel="external" target="_blank">"here"</a>
+            </p>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                "Version " {VERSION}
             </p>
         </div>
     }
