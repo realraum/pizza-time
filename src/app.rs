@@ -73,7 +73,7 @@ pub fn App() -> impl IntoView {
 #[component]
 fn About() -> impl IntoView {
     view! {
-        <div class="flex flex-col items-stretch">
+        <div class="flex flex-col items-stretch text-justify">
             <h2 class="text-2xl">"About"</h2>
             <p>"r3-pizza-time is a simple client-server web app to coordinate ordering several pizzas in a group setting, where either most if not all people have access to a web client, or just one person manages everything."</p>
             <p>"It is built with Leptos and Rust."</p>
