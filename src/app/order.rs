@@ -2,9 +2,12 @@ use std::collections::BTreeMap;
 
 use leptos::{ev::SubmitEvent, prelude::*, task::spawn_local};
 
-use crate::common::{dedup_and_count, money::Money, users::User};
 #[cfg(feature = "ssr")]
 use crate::server::{get_user_id_and_create_if_required, USERS};
+use crate::{
+    app::components::PersonCard,
+    common::{dedup_and_count, money::Money, users::User},
+};
 
 #[server(GetUsers, endpoint = "get_users")]
 pub async fn get_users() -> Result<(BTreeMap<u16, User>, u16), ServerFnError> {
@@ -83,12 +86,14 @@ pub fn Summary() -> impl IntoView {
                             .cloned()
                             .collect::<Vec<_>>();
 
+                        let my_name_2 = me.name.clone();
+
                         view! {
                             // <p>
                             //     {format!("{:?}", users)}
                             // </p>
 
-                            <div class="flex flex-col items-center gap-2 w-full">
+                            <div class="flex flex-col gap-2 w-full">
                                 <form
                                     on:submit=set_name
                                     class="flex flex-row w-full gap-2"
@@ -114,7 +119,8 @@ pub fn Summary() -> impl IntoView {
                                     "New session"
                                 </button>
 
-                                <div class="flex flex-col items-center bg-green-50 rounded p-1 dark:bg-gray-700 dark:text-gray-200">
+                                // TODO replace this div with a (specialized?) `PersonCard` component
+                                <div class="flex flex-col bg-green-50 rounded p-1 dark:bg-gray-700 dark:text-gray-200">
                                     <h2 class="text-xl">"Your selection"</h2>
                                     <p class="test-sm">"Your name: "{me.name}</p>
                                     <table>
@@ -151,39 +157,15 @@ pub fn Summary() -> impl IntoView {
                                     </table>
                                 </div>
 
-                                <div class="flex flex-col items-center bg-green-50 rounded p-1 dark:bg-gray-700 dark:text-gray-200">
+                                // <div class="flex flex-col bg-green-50 rounded p-1 dark:bg-gray-700 dark:text-gray-200">
                                     <h2 class="text-xl">"Other's selection"</h2>
                                     <h4 class="text-lg">"Alice"</h4>
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td>"1x"</td>
-                                                <td>"QuadFor"</td>
-                                                <td>"@ 10€"</td>
-                                            </tr>
-                                            <tr>
-                                                <td>"1x"</td>
-                                                <td>"Veggi"</td>
-                                                <td>"@ 12€"</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <h4 class="text-lg">"Bob"</h4>
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td>"1x"</td>
-                                                <td>"QuadFor"</td>
-                                                <td>"@ 10€"</td>
-                                            </tr>
-                                            <tr>
-                                                <td>"1x"</td>
-                                                <td>"Veggi"</td>
-                                                <td>"@ 12€"</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                    <div class="sm:rounded-xl sm:overflow-clip mt-2 sm:mt-4">
+                                        <div class="grid grid-cols-1">
+                                            <PersonCard name=my_name_2 pizzas=Vec::new() />
+                                        </div>
+                                    </div>
+                                // </div>
                             </div>
                         }
                     })

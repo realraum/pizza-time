@@ -35,3 +35,26 @@ pub fn ProductCard(pizza: Pizza) -> impl IntoView {
         </div>
     }
 }
+
+/// A card that displays a person's name and the pizzas they ordered
+///
+/// There's a `<header>` for the person's name & the count & sum of their pizzas,
+/// and a `<div>` that contains a textual description of the pizzas they ordered.
+#[component]
+pub fn PersonCard(name: String, pizzas: Vec<Pizza>) -> impl IntoView {
+    view! {
+        <div class="block bg-white dark:bg-gray-700 p-4 border-b dark:border-gray-600">
+            <header class="flex items-center justify-between">
+                <h2 class="font-bold">{name}</h2>
+                <p class="text-gray-500 dark:text-gray-400">{pizzas.len()}" pizzas"</p>
+            </header>
+            <div class="mt-2">
+                {
+                    pizzas.into_iter().map(|pizza| {
+                        view! { <ProductCard pizza=pizza /> }
+                    }).collect::<Vec<_>>()
+                }
+            </div>
+        </div>
+    }
+}
