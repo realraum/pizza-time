@@ -1,10 +1,14 @@
-use leptos::prelude::*;
+use leptos::{prelude::*, task::spawn_local};
 
-use crate::common::{dedup_and_count, Pizza};
+use crate::{
+    app::products::add_pizza_for_me,
+    common::{dedup_and_count, Pizza},
+};
 
 /// A full-with card without borders
 #[component]
 pub fn ProductCard(pizza: Pizza) -> impl IntoView {
+    let pt = pizza.clone();
     view! {
         // <div class="block bg-white dark:bg-gray-700 after:w-full after:border-b-8 dark:after:border-b-gray-600">
         <div class="block bg-white dark:bg-gray-700 p-4 border-b dark:border-gray-600">
@@ -18,7 +22,10 @@ pub fn ProductCard(pizza: Pizza) -> impl IntoView {
                 <button
                     class="bg-green-400 dark:bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
                     on:click=move |_| {
-                        // Logic to add pizza to order goes here
+                        let value = pt.clone();
+                        spawn_local(async move {
+                            add_pizza_for_me(value).await.unwrap();
+                        });
                     }
                 >
                     "Add for me"
