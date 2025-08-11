@@ -64,3 +64,22 @@ fn money_from_sus_str(s: &str) -> Result<Money, ParseError> {
 
     Ok(Money::from_euros_and_cents(euros, cents))
 }
+
+/// Generate a bunch of users with random names and some pizzas
+pub fn generate_users() -> std::collections::BTreeMap<u16, users::User> {
+    let mut users = std::collections::BTreeMap::new();
+    for i in 0..10 {
+        let mut user = users::User::new(i as u16, format!("User {}", i));
+        // Add some random pizzas to the user's order
+        for j in 0..(i % 5 + 1) {
+            user.order.push(Pizza {
+                id: format!("pizza_{}", j),
+                name: format!("Pizza {}", j),
+                description: format!("Delicious pizza number {}", j),
+                price: Money::from_cents((j + 1) * 100), //
+            });
+        }
+        users.insert(i as u16, user);
+    }
+    users
+}

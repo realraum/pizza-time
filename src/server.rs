@@ -3,8 +3,9 @@ use std::{collections::BTreeMap, sync::Mutex};
 // TODO consider: use std::cell::OnceCell;
 use once_cell::sync::OnceCell;
 
-use crate::common::users::User;
+use crate::common::{money::Money, users::User, Pizza};
 
+/// The main global state
 pub static USERS: OnceCell<&'static Mutex<BTreeMap<u16, User>>> = OnceCell::new();
 
 macro_rules! get_user_id_and_create_if_required {

@@ -157,14 +157,21 @@ pub fn Summary() -> impl IntoView {
                                     </table>
                                 </div>
 
-                                // <div class="flex flex-col bg-green-50 rounded p-1 dark:bg-gray-700 dark:text-gray-200">
-                                    <h2 class="text-xl">"Other's selection"</h2>
-                                    <h4 class="text-lg">"Alice"</h4>
-                                    <div class="sm:rounded-xl sm:overflow-clip mt-2 sm:mt-4">
-                                        <div class="grid grid-cols-1">
-                                            <PersonCard name=my_name_2 pizzas=Vec::new() />
-                                        </div>
+                                <h2 class="text-xl">"Your selection"</h2>
+                                <div class="sm:rounded-xl sm:overflow-clip mt-2 sm:mt-4">
+                                    <div class="grid grid-cols-1">
+                                        <PersonCard name=my_name_2.clone() pizzas=Vec::new() />
                                     </div>
+                                </div>
+                                <h2 class="text-xl">"Other's selection"</h2>
+                                <div class="sm:rounded-xl sm:overflow-clip mt-2 sm:mt-4">
+                                    <div class="grid grid-cols-1">
+                                        <PersonCard name="Alice".into() pizzas=Vec::new() />
+                                        <PersonCard name="Alice".into() pizzas=Vec::new() />
+                                        <PersonCard name="Alice".into() pizzas=Vec::new() />
+                                        <PersonCard name="Alice".into() pizzas=Vec::new() />
+                                    </div>
+                                </div>
                                 // </div>
                             </div>
                         }

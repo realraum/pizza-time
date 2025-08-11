@@ -1,15 +1,19 @@
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
+    use std::sync::Mutex;
+
     use axum::Router;
     use leptos::logging::log;
     use leptos::prelude::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
 
-    use r3_pizza_time::{app::*, server::USERS};
+    use r3_pizza_time::{app::*, common::generate_users, server::USERS};
 
     // Prep the global state
-    USERS.set(Box::leak(Box::new(Default::default()))).unwrap();
+    // USERS.set(Box::leak(Box::new(Default::default()))).unwrap();
+    let demo_users = Box::leak(Box::new(Mutex::new(generate_users())));
+    USERS.set(demo_users).unwrap();
 
     let conf = get_configuration(None).unwrap();
     let addr = conf.leptos_options.site_addr;
