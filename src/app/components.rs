@@ -49,7 +49,10 @@ pub fn PersonCard(name: String, pizzas: Vec<Pizza>) -> impl IntoView {
         <div class="block bg-white dark:bg-gray-700 p-4 border-b dark:border-gray-600">
             <header class="flex items-center justify-between">
                 <h2 class="font-bold">{name}</h2>
-                <p class="text-gray-500 dark:text-gray-400">{pizzas.len()}" pizzas"</p>
+                <p class="text-gray-500 dark:text-gray-400">
+                    {pizzas.len()}
+                    { if pizzas.len() == 1 {" pizza"} else {" pizzas"} }
+                </p>
             </header>
             <div class="mt-2">
                 {

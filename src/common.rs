@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 
 use money::Money;
 
+use crate::app::PRODUCT_JSON_STR;
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Pizza {
     pub id: String,
@@ -67,17 +69,20 @@ fn money_from_sus_str(s: &str) -> Result<Money, ParseError> {
 
 /// Generate a bunch of users with random names and some pizzas
 pub fn generate_users() -> std::collections::BTreeMap<u16, users::User> {
+    let pizzas = serde_json::from_str::<Vec<SusPizza>>(PRODUCT_JSON_STR);
+
+    let pizzas: Vec<Pizza> = pizzas
+        .unwrap()
+        .into_iter()
+        .map(Pizza::from_sus_pizza)
+        .collect();
+
     let mut users = std::collections::BTreeMap::new();
     for i in 0..10 {
         let mut user = users::User::new(i as u16, format!("User {}", i));
         // Add some random pizzas to the user's order
         for j in 0..(i % 5 + 1) {
-            user.order.push(Pizza {
-                id: format!("pizza_{}", j),
-                name: format!("Pizza {}", j),
-                description: format!("Delicious pizza number {}", j),
-                price: Money::from_cents((j + 1) * 100), //
-            });
+            user.order.push(pizzas[j % pizzas.len()].clone());
         }
         users.insert(i as u16, user);
     }
