@@ -14,7 +14,7 @@ pub fn ProductCard(pizza: Pizza) -> impl IntoView {
             </header>
             <p class="text-gray-600 dark:text-gray-300">{pizza.price.to_string()}" €"</p>
             <p class="mt-2">{pizza.description}</p>
-            <div class="mt-4 flex justify-start gap-2">
+            <div class="mt-2 flex justify-start gap-2">
                 <button
                     class="bg-green-400 dark:bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
                     on:click=move |_| {
