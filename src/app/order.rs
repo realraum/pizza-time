@@ -166,10 +166,16 @@ pub fn Summary() -> impl IntoView {
                                 <h2 class="text-xl">"Other's selection"</h2>
                                 <div class="sm:rounded-xl sm:overflow-clip mt-2 sm:mt-4">
                                     <div class="grid grid-cols-1">
-                                        <PersonCard name="Alice".into() pizzas=Vec::new() />
-                                        <PersonCard name="Alice".into() pizzas=Vec::new() />
-                                        <PersonCard name="Alice".into() pizzas=Vec::new() />
-                                        <PersonCard name="Alice".into() pizzas=Vec::new() />
+                                        {move ||
+                                            others.iter()
+                                                .map(|user| {
+                                                    let name = user.name.clone();
+                                                    view! {
+                                                        <PersonCard name=name pizzas=user.order.clone() />
+                                                    }
+                                                })
+                                                .collect::<Vec<_>>()
+                                        }
                                     </div>
                                 </div>
                                 // </div>

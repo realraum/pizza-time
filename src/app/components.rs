@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 
-use crate::common::Pizza;
+use crate::common::{dedup_and_count, Pizza};
 
 /// A full-with card without borders
 #[component]
@@ -42,6 +42,9 @@ pub fn ProductCard(pizza: Pizza) -> impl IntoView {
 /// and a `<div>` that contains a textual description of the pizzas they ordered.
 #[component]
 pub fn PersonCard(name: String, pizzas: Vec<Pizza>) -> impl IntoView {
+    let mut pizzas = dedup_and_count(pizzas);
+    pizzas.sort_by(|(a, _), (b, _)| a.name.cmp(&b.name));
+    pizzas.sort_by_key(|(_, count)| *count);
     view! {
         <div class="block bg-white dark:bg-gray-700 p-4 border-b dark:border-gray-600">
             <header class="flex items-center justify-between">
@@ -50,8 +53,12 @@ pub fn PersonCard(name: String, pizzas: Vec<Pizza>) -> impl IntoView {
             </header>
             <div class="mt-2">
                 {
-                    pizzas.into_iter().map(|pizza| {
-                        view! { <ProductCard pizza=pizza /> }
+                    pizzas.into_iter().map(|(pizza, count)| {
+                        view! {
+                            <p>
+                                {count} "x " {pizza.name} " - " {pizza.price.to_string()} " €"
+                            </p>
+                        }
                     }).collect::<Vec<_>>()
                 }
             </div>
