@@ -160,7 +160,7 @@ pub fn Summary() -> impl IntoView {
                                 <h2 class="text-xl">"Your selection"</h2>
                                 <div class="sm:rounded-xl sm:overflow-clip mt-2 sm:mt-4">
                                     <div class="grid grid-cols-1">
-                                        <PersonCard name=my_name_2.clone() pizzas=Vec::new() />
+                                        <PersonCard name=my_name_2.clone() pizzas=me.order />
                                     </div>
                                 </div>
                                 <h2 class="text-xl">"Other's selection"</h2>
