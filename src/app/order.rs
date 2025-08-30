@@ -31,7 +31,7 @@ async fn set_name(name: String) -> Result<(), ServerFnError> {
 
 /// Removes a pizza by pid (pizza id)
 #[server(RmPizza, endpoint = "rm_pizza")]
-async fn rm_pizza(pid: String) -> Result<(), ServerFnError> {
+pub async fn rm_pizza(pid: String) -> Result<(), ServerFnError> {
     let (mut users, uid) = get_user_id_and_create_if_required!();
 
     if let Some(user) = users.get_mut(&uid) {
@@ -171,7 +171,7 @@ pub fn Summary() -> impl IntoView {
                                                 .map(|user| {
                                                     let name = user.name.clone();
                                                     view! {
-                                                        <PersonCard name=name pizzas=user.order.clone() />
+                                                        <PersonCard name=name pizzas=user.order.clone() is_me=true/>
                                                     }
                                                 })
                                                 .collect::<Vec<_>>()

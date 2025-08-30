@@ -1,7 +1,7 @@
 use leptos::{prelude::*, task::spawn_local};
 
 use crate::{
-    app::products::add_pizza_for_me,
+    app::{order::rm_pizza, products::add_pizza_for_me},
     common::{dedup_and_count, Pizza},
 };
 
@@ -48,7 +48,11 @@ pub fn ProductCard(pizza: Pizza) -> impl IntoView {
 /// There's a `<header>` for the person's name & the count & sum of their pizzas,
 /// and a `<div>` that contains a textual description of the pizzas they ordered.
 #[component]
-pub fn PersonCard(name: String, pizzas: Vec<Pizza>) -> impl IntoView {
+pub fn PersonCard(
+    name: String,
+    pizzas: Vec<Pizza>,
+    #[prop(default = false)] is_me: bool,
+) -> impl IntoView {
     let mut pizzas = dedup_and_count(pizzas);
     pizzas.sort_by(|(a, _), (b, _)| a.name.cmp(&b.name));
     pizzas.sort_by_key(|(_, count)| *count);
@@ -65,9 +69,29 @@ pub fn PersonCard(name: String, pizzas: Vec<Pizza>) -> impl IntoView {
                 {
                     pizzas.into_iter().map(|(pizza, count)| {
                         view! {
+                            <span>
                             <p>
                                 {count} "x " {pizza.name} " - " {pizza.price.to_string()} " €"
                             </p>
+                            {if !is_me {
+                                Some(view! {
+                                        <button
+                                            class="bg-red-500 text-white rounded-md p-1 ml-2"
+                                            on:click=move |_| {
+                                                let pid = pizza.id.clone();
+                                                spawn_local(async move {
+                                                    rm_pizza(pid).await.unwrap();
+                                                });
+                                                // update_signal.set(!update_signal.get());
+                                            }
+                                        >
+                                            "Remove"
+                                        </button>
+                                })
+                            } else {
+                                None
+                            }}
+                            </span>
                         }
                     }).collect::<Vec<_>>()
                 }
