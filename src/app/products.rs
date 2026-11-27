@@ -66,7 +66,7 @@ pub fn PizzaList() -> impl IntoView {
         }
     });
 
-    let users = Resource::new(dialog_state, async move |_| {
+    let users = Resource::new(move || dialog_state.get(), async move |_| {
         let users = get_users().await;
         users.map(|users| (users.0.values().cloned().collect::<Vec<_>>(), users.1))
     });
